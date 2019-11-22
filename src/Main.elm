@@ -66,19 +66,49 @@ viewItem item =
         [ div [ class "col-sm-6" ]
             [ div [ class "card border" ]
                 [ viewCardImage item.image
-                , div [ class "card-body" ]
-                    [ h5 [ class "card-title" ] [ text item.title ]
-                    , h6 [ class "card-subtitle" ] [ text item.who ]
-                    ]
-                , div [ class "card-body" ]
-                    (List.concat
-                        [ Maybe.withDefault [] (Maybe.map (\s -> [ div [ class "alert alert-secondary" ] [ text s ] ]) item.renewed)
-                        , [ div [ class "alert alert-primary" ] [ text item.status ] ]
+                , div [ class ("card-body alert-" ++ dangerLevelClass item.dueInDays) ]
+                    [ div [ class "" ]
+                        [ div [ class ("float-right days-left-badge badge badge-" ++ dangerLevelClass item.dueInDays) ]
+                            [ text (daysLeft item.dueInDays)
+
+                            {--, br [] [], text item.status --}
+                            ]
+
+                        -- , div [ class ("float-right badge badge-" ++ dangerLevelClass item.dueInDays) ] [ text item.status ]
                         ]
-                    )
+                    , h5 [ class "card-title" ] [ text item.title ]
+                    , h6 [ class "card-subtitle" ] [ text item.who ]
+                    , div [ class "" ]
+                        (List.concat
+                            [ Maybe.withDefault [] (Maybe.map (\s -> [ div [ class "" ] [ text s ] ]) item.renewed)
+                            , [ div [ class "" ] [ text item.status ] ]
+                            ]
+                        )
+                    ]
                 ]
             ]
         ]
+
+
+daysLeft days =
+    case days of
+        1 ->
+            "1 day left"
+
+        _ ->
+            String.fromInt days ++ " days left"
+
+
+dangerLevelClass : Int -> String
+dangerLevelClass days =
+    if days <= 2 then
+        "danger"
+
+    else if days <= 5 then
+        "warning"
+
+    else
+        "success"
 
 
 viewCardImage : Maybe ItemImage -> Html Msg
