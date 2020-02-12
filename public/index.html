@@ -28,7 +28,14 @@
 <body>
   <main></main>
   <script>
-    var app = Elm.Main.init({ node: document.querySelector('main') })
+    const loadSettings = function() {
+      const json = localStorage.settings;
+      return json ? JSON.parse(json) : {credentials:[]};
+    };
+    var app = Elm.Main.init({
+      node: document.querySelector('main'),
+      flags: loadSettings()
+    })
   </script>
 </body>
 </html>
